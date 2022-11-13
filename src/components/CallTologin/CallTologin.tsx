@@ -17,7 +17,7 @@ const CallToLogin = () => {
 			<h1>Log in to see your contacts</h1>
 			<Button
 				variant={'contained'}
-        sx={{ width: '80%', alignSelf: 'center', m: 2, fontWeight: 'bold' }}
+        sx={{ width: '50%', alignSelf: 'center', m: 2, fontWeight: 'bold' }}
 				onClick={() => setLoginModalOpen(true)}
 			>
 				Register/Login
