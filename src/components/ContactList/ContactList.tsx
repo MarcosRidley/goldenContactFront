@@ -71,20 +71,16 @@ export default function ContactList() {
 		setContactModalOpen(true);
 	};
 
-  const handleDelete = async (id: number) => {
-      await fetch(
-        `https://goldcontactsapi.herokuapp.com/contacts/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
-          },
-        }
-      );
-      setRerenderTrigger((prevState) => prevState + 1);
-  };
-
+	const handleDelete = async (id: number) => {
+		await fetch(`https://goldcontactsapi.herokuapp.com/contacts/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
+			},
+		});
+		setRerenderTrigger((prevState) => prevState + 1);
+	};
 
 	const capitalizeFirstLetter = (string: string) => {
 		return string.charAt(0).toUpperCase() + string.slice(1);
@@ -102,9 +98,11 @@ export default function ContactList() {
 		navigator.clipboard.writeText(
 			` (${contact.areaCode}) ${formatPhoneNumber(contact.phoneNumber)}`
 		);
-    setTimeout(() => {
-      event.target.textContent = ` ${contact.areaCode}) ${formatPhoneNumber(contact.phoneNumber)}`;
-    }, 3000);
+		setTimeout(() => {
+			event.target.textContent = ` ${contact.areaCode}) ${formatPhoneNumber(
+				contact.phoneNumber
+			)}`;
+		}, 3000);
 	};
 
 	return (
@@ -122,10 +120,15 @@ export default function ContactList() {
 					variant="contained"
 					sx={{ m: 2, width: '45%', fontWeight: 'bold' }}
 				>
-					Adicionar
+					Add contact
 				</Button>
 			</Box>
 			<CreateContactModal setRerenderTrigger={setRerenderTrigger} />
+			{userContacts.length === 0 ? (
+				<Typography variant="h5" sx={{ textAlign: 'center', mt: 5 }}>
+					You have no contacts yet. Click the Add button to create one.
+				</Typography>
+			) : null}
 			<List
 				sx={{
 					width: '100%',
@@ -171,8 +174,8 @@ export default function ContactList() {
 								}}
 								secondary={
 									<React.Fragment>
-										<Box
-											sx={{
+										<span
+											style={{
 												display: 'flex',
 												flexDirection: 'column',
 												alignItems: 'center',
@@ -198,8 +201,8 @@ export default function ContactList() {
 													contact.phoneNumber
 												)}`}
 											</Typography>
-											<Box
-												sx={{
+											<span
+												style={{
 													display: 'flex',
 													alignItems: 'center',
 													justifyContent: 'space-between',
@@ -220,11 +223,14 @@ export default function ContactList() {
 												>
 													<EditIcon color="action" fontSize="large"></EditIcon>
 												</Button>
-												<Button sx={{ fontWeight: 'bold' }} onClick={ () => handleDelete(contact.id) }>
+												<Button
+													sx={{ fontWeight: 'bold' }}
+													onClick={() => handleDelete(contact.id)}
+												>
 													<DeleteIcon color="error" fontSize="large" />
 												</Button>
-											</Box>
-										</Box>
+											</span>
+										</span>
 									</React.Fragment>
 								}
 							/>

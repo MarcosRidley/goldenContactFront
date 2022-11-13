@@ -64,7 +64,7 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
+						Authorization: `${JSON.parse(localStorage.getItem('token') as string)}`,
 					},
 					body: JSON.stringify({ areaCode, phoneNumber, contactName }),
 				}
@@ -172,6 +172,11 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 								variant="outlined"
 								placeholder="John doe"
 								inputProps={{ minLength: 4, maxLength: 25 }}
+								error={
+									contactName === '' ||
+									contactName.length < 4 ||
+									contactName.length > 25
+								}
 								helperText="Min 4 characters, max 25 characters"
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
 								value={contactName}
@@ -184,7 +189,10 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 								label="Area Code"
 								inputProps={{ minLength: 2, maxLength: 2 }}
 								helperText="Area code numbers have 2 digits. Numbers only."
-								placeholder="11"
+								error={
+									contactAreaCode.length !== 2 || !/^\d+$/.test(contactAreaCode)
+								}
+								placeholder="XX"
 								variant="outlined"
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
 								value={contactAreaCode}
@@ -194,8 +202,12 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 								id="PhoneNumber"
 								required
 								type={'tel'}
-								placeholder="987654321"
+								placeholder="XXXXXXXXX"
 								helperText="Phone numbers have 9 digits. Numbers only"
+								error={
+									contactPhoneNumber.length !== 9 ||
+									!/^\d+$/.test(contactPhoneNumber)
+								}
 								label="Phone Number"
 								inputProps={{ minLength: 9, maxLength: 9 }}
 								disabled={isLoading}
@@ -209,7 +221,16 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 								<Button
 									variant={'contained'}
 									sx={{ width: '45%', m: 2, p: 2 }}
-									disabled={isLoading}
+									disabled={
+										isLoading ||
+										contactName === '' ||
+										contactName.length < 4 ||
+										contactName.length > 25 ||
+										contactAreaCode.length !== 2 ||
+										!/^\d+$/.test(contactAreaCode) ||
+										contactPhoneNumber.length !== 9 ||
+										!/^\d+$/.test(contactPhoneNumber)
+									}
 									onClick={() => {
 										if (!isEditingContact) {
 											handleAddContact(

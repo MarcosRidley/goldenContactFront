@@ -1,6 +1,6 @@
 # Golden Contacts
 
-This project is a simple contacts manager. It was requested as part of the entry test for a job interview.
+This project is a simple contacts manager. It was requested as part of the entry test for a job interview @Gold Software IT .
 
 ## To run this project:
 
