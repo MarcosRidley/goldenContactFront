@@ -22,24 +22,40 @@ const style = {
 
 interface CreateContactModalProps {
 	setRerenderTrigger: React.Dispatch<React.SetStateAction<number>>;
-};
+}
 
-export default function CreateContactModal(props:CreateContactModalProps) {
-	const { contactModalOpen, setContactModalOpen } =
-		useContext(LoginContext);
-	const handleClose = () => setContactModalOpen(false);
+export default function CreateContactModal(props: CreateContactModalProps) {
+	const {
+		contactModalOpen,
+		setContactModalOpen,
+		isEditingContact,
+		contactToEdit,
+		setIsEditingContact,
+	} = useContext(LoginContext);
+
 	const [isLoading, setIsLoading] = React.useState<boolean>(false);
 	const [errorOcurred, setErrorOcurred] = React.useState<boolean>(false);
 	const [errorResponse, setErrorResponse] = React.useState<string | null>(null);
 
-  //form handlers
-  const [contactName, setContactName] = React.useState<string>('');
-  const [contactPhoneNumber, setContactPhoneNumber] = React.useState<string>('');
-  const [contactAreaCode, setContactAreaCode] = React.useState<string>('');
-  //end form handlers
+	//form handlers
+	const [contactName, setContactName] = React.useState<string>('');
+	const [contactPhoneNumber, setContactPhoneNumber] =
+		React.useState<string>('');
+	const [contactAreaCode, setContactAreaCode] = React.useState<string>('');
+	//end form handlers
 
-	const handleAddContact = async (contactName:string, areaCode:string, phoneNumber:string) => {
+	const handleClose = () => {
+		setContactModalOpen(false);
+		setIsEditingContact(false);
+	};
+
+	const handleAddContact = async (
+		contactName: string,
+		areaCode: string,
+		phoneNumber: string
+	) => {
 		setIsLoading(true);
+		setErrorOcurred(false);
 
 		try {
 			const response = await fetch(
@@ -48,7 +64,7 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-            Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
+						Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
 					},
 					body: JSON.stringify({ areaCode, phoneNumber, contactName }),
 				}
@@ -57,9 +73,11 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 				setIsLoading(false);
 				setErrorOcurred(false);
 				setErrorResponse(null);
+				setContactName('');
+				setContactAreaCode('');
+				setContactPhoneNumber('');
 				setContactModalOpen(false);
-        props.setRerenderTrigger((prev) => prev + 1);
-
+				props.setRerenderTrigger((prev) => prev + 1);
 			} else {
 				throw new Error('Failed to create new contact!');
 			}
@@ -70,6 +88,45 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 		}
 	};
 
+	const handleEditContact = async (
+		id: number,
+		contactName: string,
+		areaCode: string,
+		phoneNumber: string
+	) => {
+		setIsLoading(true);
+		setErrorOcurred(false);
+
+		try {
+			const response = await fetch(
+				'https://goldcontactsapi.herokuapp.com/contacts/' + id,
+				{
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
+					},
+					body: JSON.stringify({ areaCode, phoneNumber, contactName }),
+				}
+			);
+			if (response.status === 200) {
+				setIsLoading(false);
+				setErrorOcurred(false);
+				setErrorResponse(null);
+				setContactName('');
+				setContactAreaCode('');
+				setContactPhoneNumber('');
+				setContactModalOpen(false);
+				props.setRerenderTrigger((prev) => prev + 1);
+			} else {
+				throw new Error('Failed to edit contact!');
+			}
+		} catch (error) {
+			setIsLoading(false);
+			setErrorOcurred(true);
+			setErrorResponse('Contact edit failed. Try again.');
+		}
+	};
 
 	return (
 		<div>
@@ -98,7 +155,7 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 								fontFamily: 'Roboto',
 							}}
 						>
-							Add a new contact
+							{isEditingContact ? 'Edit contact' : 'Add a new contact'}
 						</Typography>
 						<Box
 							sx={{
@@ -115,7 +172,7 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 								variant="outlined"
 								placeholder="John doe"
 								inputProps={{ minLength: 4, maxLength: 25 }}
-                helperText="Min 4 characters, max 25 characters"
+								helperText="Min 4 characters, max 25 characters"
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
 								value={contactName}
 								onChange={(e) => setContactName(e.target.value)}
@@ -126,7 +183,7 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 								disabled={isLoading}
 								label="Area Code"
 								inputProps={{ minLength: 2, maxLength: 2 }}
-                helperText="Area code numbers have 2 digits. Numbers only."
+								helperText="Area code numbers have 2 digits. Numbers only."
 								placeholder="11"
 								variant="outlined"
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
@@ -136,9 +193,9 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 							<TextField
 								id="PhoneNumber"
 								required
-                type={'tel'}
+								type={'tel'}
 								placeholder="987654321"
-                helperText="Phone numbers have 9 digits. Numbers only"
+								helperText="Phone numbers have 9 digits. Numbers only"
 								label="Phone Number"
 								inputProps={{ minLength: 9, maxLength: 9 }}
 								disabled={isLoading}
@@ -151,10 +208,23 @@ export default function CreateContactModal(props:CreateContactModalProps) {
 							<Box textAlign="center" sx={{ width: '100%' }}>
 								<Button
 									variant={'contained'}
-									sx={{ width: '45%', m:2, p: 2 }}
+									sx={{ width: '45%', m: 2, p: 2 }}
 									disabled={isLoading}
 									onClick={() => {
-										handleAddContact(contactName, contactAreaCode, contactPhoneNumber);
+										if (!isEditingContact) {
+											handleAddContact(
+												contactName,
+												contactAreaCode,
+												contactPhoneNumber
+											);
+										} else {
+											handleEditContact(
+												contactToEdit,
+												contactName,
+												contactAreaCode,
+												contactPhoneNumber
+											);
+										}
 									}}
 								>
 									{!isLoading ? 'Add contact' : <CircularProgress size={24} />}

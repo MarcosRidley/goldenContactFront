@@ -10,14 +10,19 @@ import IContact from '../../interfaces/IContact';
 import { Box, Button, TextField } from '@mui/material';
 import { LoginContext } from '../../Contexts/LoginContext';
 import CreateContactModal from '../CreateContactModal';
+import WhatsappBtn from './WhatsappBtn/WhatsappBtn';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ContactList() {
-
-  const { setContactModalOpen } = React.useContext(LoginContext);
+	const { setContactModalOpen, setIsEditingContact, setContactToEdit } =
+		React.useContext(LoginContext);
 	const [userContacts, setUserContacts] = React.useState<IContact[]>([]);
-  const [rerenderTrigger, setRerenderTrigger] = React.useState<number>(0);
-  const [searchTerm, setSearchTerm] = React.useState<string>('');
-  const [filteredContacts, setFilteredContacts] = React.useState<IContact[]>([]);
+	const [rerenderTrigger, setRerenderTrigger] = React.useState<number>(0);
+	const [searchTerm, setSearchTerm] = React.useState<string>('');
+	const [filteredContacts, setFilteredContacts] = React.useState<IContact[]>(
+		[]
+	);
 
 	React.useEffect(() => {
 		const getRequests = async () => {
@@ -40,40 +45,77 @@ export default function ContactList() {
 				}
 			} catch (error) {
 				console.log(error);
-        console.log('tal')
+				console.log('tal');
 			}
 		};
 		getRequests();
 	}, [rerenderTrigger]);
 
-  React.useEffect(() => {
-    //every time the user types something in the search bar, the contacts list will be filtered by the search term and the filtered list will be displayed on the screen 
-    const filteredContacts = userContacts.filter((contact) => {
-      return contact.contactName.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    setFilteredContacts(filteredContacts);
-  }, [userContacts, searchTerm]);
+	React.useEffect(() => {
+		//every time the user types something in the search bar, the contacts list will be filtered by the search term and the filtered list will be displayed on the screen
+		const filteredContacts = userContacts.filter((contact) => {
+			return contact.contactName
+				.toLowerCase()
+				.includes(searchTerm.toLowerCase());
+		});
+		setFilteredContacts(
+			filteredContacts.sort((a, b) =>
+				a.contactName.localeCompare(b.contactName)
+			)
+		);
+	}, [userContacts, searchTerm]);
 
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+	const handleEdit = async (id: number) => {
+		setIsEditingContact(true);
+		setContactToEdit(id);
+		setContactModalOpen(true);
+	};
 
-  const formatPhoneNumber = (phoneNumber: string):string => {
-    const cleanNumber = phoneNumber.replace(/\D/g, '')
-    const firstPart = cleanNumber.substring(0, 5);
-    const secondPart = cleanNumber.substring(5, 9);
-    return `${firstPart}-${secondPart}`
-  }
+  const handleDelete = async (id: number) => {
+      await fetch(
+        `https://goldcontactsapi.herokuapp.com/contacts/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
+          },
+        }
+      );
+      setRerenderTrigger((prevState) => prevState + 1);
+  };
+
+
+	const capitalizeFirstLetter = (string: string) => {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	};
+
+	const formatPhoneNumber = (phoneNumber: string): string => {
+		const cleanNumber = phoneNumber.replace(/\D/g, '');
+		const firstPart = cleanNumber.substring(0, 5);
+		const secondPart = cleanNumber.substring(5, 9);
+		return `${firstPart}-${secondPart}`;
+	};
+
+	const handleCopy = (event: any, contact: IContact) => {
+		event.target.textContent = 'Copied!';
+		navigator.clipboard.writeText(
+			` (${contact.areaCode}) ${formatPhoneNumber(contact.phoneNumber)}`
+		);
+    setTimeout(() => {
+      event.target.textContent = ` ${contact.areaCode}) ${formatPhoneNumber(contact.phoneNumber)}`;
+    }, 3000);
+	};
 
 	return (
-		<>
-			<Box sx={{ display: 'flex' }}>
+		<section style={{ backgroundColor: '#DDD', height: '100vh' }}>
+			<Box sx={{ display: 'flex', backgroundColor: '#EEE' }}>
 				<TextField
 					label="Type to search"
 					id="search"
 					sx={{ m: 2, width: '50%' }}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
+					value={searchTerm}
 				/>
 				<Button
 					onClick={() => setContactModalOpen(true)}
@@ -84,30 +126,105 @@ export default function ContactList() {
 				</Button>
 			</Box>
 			<CreateContactModal setRerenderTrigger={setRerenderTrigger} />
-			<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+			<List
+				sx={{
+					width: '100%',
+					bgcolor: '#DDD',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+				}}
+			>
 				{filteredContacts.map((contact) => (
 					<React.Fragment key={contact.id}>
-						<ListItem alignItems="flex-start">
+						<ListItem
+							alignItems="center"
+							sx={{ display: 'flex', alignItems: 'center' }}
+						>
 							<ListItemAvatar>
 								<Avatar
 									alt={contact.contactName.toUpperCase()}
 									src="/static/images/avatar/1.jpg"
+									sx={{
+										width: '60px',
+										height: '60px',
+										fontSize: '30px',
+										fontWeight: 'bold',
+										color: '#DDD',
+										backgroundColor: 'brown',
+										marginRight: '0.8em',
+									}}
 								/>
 							</ListItemAvatar>
 							<ListItemText
 								primary={capitalizeFirstLetter(contact.contactName)}
+								primaryTypographyProps={{
+									variant: 'body1',
+									fontWeight: 'bold',
+									color: '#111',
+								}}
+								sx={{
+									alignItems: 'center',
+									display: 'flex',
+									justifyContent: 'space-between',
+									width: '100%',
+								}}
 								secondary={
 									<React.Fragment>
-										<Typography
-											sx={{ display: 'inline', fontWeight: 'bold' }}
-											component="span"
-											variant="body2"
-											color="text.primary"
+										<Box
+											sx={{
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'center',
+											}}
 										>
-											{` (${contact.areaCode}) ${formatPhoneNumber(
-												contact.phoneNumber
-											)}`}
-										</Typography>
+											<Typography
+												sx={{
+													display: 'inline',
+													fontWeight: 'bold',
+													fontSize: '1.2em',
+													color: '#222',
+													'&:hover': {
+														cursor: 'pointer',
+														textDecoration: 'underline',
+													},
+												}}
+												component="span"
+												variant="body2"
+												color="text.primary"
+												onClick={(e) => handleCopy(e, contact)}
+											>
+												{` (${contact.areaCode}) ${formatPhoneNumber(
+													contact.phoneNumber
+												)}`}
+											</Typography>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'space-between',
+													width: '100%',
+												}}
+											>
+												<Button sx={{ fontWeight: 'bold' }}>
+													{
+														<WhatsappBtn
+															areaCode={contact.areaCode}
+															number={contact.phoneNumber}
+														/>
+													}
+												</Button>
+												<Button
+													sx={{ fontWeight: 'bold' }}
+													onClick={() => handleEdit(contact.id)}
+												>
+													<EditIcon color="action" fontSize="large"></EditIcon>
+												</Button>
+												<Button sx={{ fontWeight: 'bold' }} onClick={ () => handleDelete(contact.id) }>
+													<DeleteIcon color="error" fontSize="large" />
+												</Button>
+											</Box>
+										</Box>
 									</React.Fragment>
 								}
 							/>
@@ -116,6 +233,6 @@ export default function ContactList() {
 					</React.Fragment>
 				))}
 			</List>
-		</>
+		</section>
 	);
 }

@@ -11,6 +11,8 @@ function App() {
 	const [userContacts, setUserContacts] = React.useState<IContact[]>([]);
 	const [loginModalOpen, setLoginModalOpen] = React.useState<boolean>(false);
 	const [contactModalOpen, setContactModalOpen] = React.useState<boolean>(false);
+	const [isEditingContact, setIsEditingContact] = React.useState<boolean>(false);
+	const [contactToEdit, setContactToEdit] = React.useState<number>(0);
 
 	React.useEffect(() => {
 		const token = localStorage.getItem('token');
@@ -37,6 +39,10 @@ function App() {
 					setLoginModalOpen,
 					contactModalOpen,
 					setContactModalOpen,
+					isEditingContact,
+					setIsEditingContact,
+					contactToEdit,
+					setContactToEdit,
 				}}
 			>
 				<Header />
