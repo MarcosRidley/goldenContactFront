@@ -44,8 +44,7 @@ export default function ContactList() {
 					throw new Error('Failed to fetch contacts');
 				}
 			} catch (error) {
-				console.log(error);
-				console.log('tal');
+        console.log(error);
 			}
 		};
 		getRequests();

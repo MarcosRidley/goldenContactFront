@@ -58,7 +58,6 @@ export default function LoginModal() {
 				throw new Error('Registration failed');
 			}
 		} catch (error) {
-			console.log('teste');
 			setIsLoading(false);
 			setErrorOcurred(true);
 			setErrorResponse('Registration failed. Try again.');

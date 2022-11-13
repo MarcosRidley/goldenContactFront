@@ -93,7 +93,6 @@ function Header() {
 								sx={{ p: 0, display: 'flex' }}
 							>
 								<Avatar
-									src="/static/images/avatar/3.jpg"
 								/>
 							</IconButton>
 						</Tooltip>
