@@ -49,6 +49,9 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 	//end form handlers
 
 	const handleClose = () => {
+		setContactName('');
+		setContactPhoneNumber('');
+		setContactAreaCode('');
 		setContactModalOpen(false);
 		setIsEditingContact(false);
 	};
@@ -120,7 +123,7 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 						'Content-Type': 'application/json',
 						Authorization: `${JSON.parse(localStorage.getItem('token')!)}`,
 					},
-					body: JSON.stringify({ areaCode, phoneNumber, contactName }),
+					body: JSON.stringify({ areaCode, phoneNumber, contactName: contactName.trim() }),
 				}
 			);
 			if (response.status === 200) {

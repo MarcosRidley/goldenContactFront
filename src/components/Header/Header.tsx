@@ -64,7 +64,7 @@ function Header() {
 						Golden Contacts
 					</Typography>
 
-					<ImportContactsIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 0.8, color:'gold'}} />
+					<ImportContactsIcon sx={{ display: { xs: 'flex', md: 'flex' }, mr: 0.8, color:'gold'}} />
 					<Typography
 						variant="h5"
 						noWrap

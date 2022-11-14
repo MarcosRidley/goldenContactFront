@@ -53,9 +53,9 @@ export default function ContactList() {
 	React.useEffect(() => {
 		//every time the user types something in the search bar, the contacts list will be filtered by the search term and the filtered list will be displayed on the screen
 		const filteredContacts = userContacts.filter((contact) => {
-			return contact.contactName
+			return (contact.contactName
 				.toLowerCase()
-				.includes(searchTerm.toLowerCase());
+				.includes(searchTerm.toLowerCase()) || contact.phoneNumber.includes(searchTerm));
 		});
 		setFilteredContacts(
 			filteredContacts.sort((a, b) =>
@@ -145,7 +145,9 @@ export default function ContactList() {
 						>
 							<ListItemAvatar>
 								<Avatar
-									alt={contact.contactName.toUpperCase()}
+									alt={contact.contactName.toUpperCase().trim()}
+									//if the contact has a profile picture, it will be displayed, otherwise the first letter of the contact name will be displayed
+									//since this is a demo app, no profile pictures are available, so the first letter of the contact name will be displayed instead
 									src="/static/images/avatar/1.jpg"
 									sx={{
 										width: '60px',
