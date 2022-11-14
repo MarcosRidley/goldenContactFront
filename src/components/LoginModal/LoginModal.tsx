@@ -153,11 +153,11 @@ export default function LoginModal() {
 								id="userName"
 								required
 								label="Username"
-								disabled={isLoading}
+								disabled={isLoading }
 								variant="outlined"
 								inputProps={{ minLength: 4, maxLength: 20 }}
-								error={userName.length < 4 || userName.length > 20}
-								helperText={'Username must be between 4 and 20 characters'}
+								error={userName !== '' && (userName.length < 4 || userName.length > 20 || !/^[a-zA-Z0-9]+$/.test(userName))}
+								helperText={'Username must be between 4 and 20 characters and contain only letters and numbers'}
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
 								value={userName}
 								onChange={(e) => setUserName(e.target.value)}
@@ -167,9 +167,9 @@ export default function LoginModal() {
 								required
 								type="password"
 								disabled={isLoading}
-								inputProps={{ minLength: 4, maxLength: 20 }}
-								error={password.length < 4 || password.length > 20 || password.includes(' ') }
-								helperText={'Password must be between 4 and 20 characters and cannot contain spaces'}
+								inputProps={{ minLength: 6, maxLength: 20 }}
+								error={password !== '' && (password.length < 6 || password.length > 20 || password.includes(' ')) }
+								helperText={'Password must be between 6 and 20 characters and cannot contain spaces'}
 								label="Password"
 								variant="outlined"
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
@@ -179,6 +179,7 @@ export default function LoginModal() {
 							{isLogin ? (
 								<Button
 									variant="contained"
+									disabled={isLoading || userName === '' || password === '' || userName.length < 4 || userName.length > 20 || !/^[a-zA-Z0-9]+$/.test(userName) || password.length < 6 || password.length > 20 || password.includes(' ')}
 									sx={{ width: '80%', alignSelf: 'center', m: 2 }}
 									onClick={() => {
 										handleLogin(userName, password);
@@ -190,6 +191,7 @@ export default function LoginModal() {
 								<Button
 									variant="contained"
 									sx={{ width: '80%', alignSelf: 'center', m: 2 }}
+									disabled={isLoading || userName === '' || password === '' || userName.length < 4 || userName.length > 20 || !/^[a-zA-Z0-9]+$/.test(userName) || password.length < 6 || password.length > 20 || password.includes(' ')}
 									onClick={() => {
 										handleRegister(userName, password);
 									}}

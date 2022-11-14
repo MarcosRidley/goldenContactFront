@@ -16,7 +16,7 @@ import LoginModal from '../LoginModal';
 
 function Header() {
 
-  const { isLoggedIn, setIsLoggedIn, setUserContacts, setUserName, userName, setLoginModalOpen } = useContext(LoginContext);
+  const { isLoggedIn, setIsLoggedIn, setUserContacts, setUserName, setLoginModalOpen } = useContext(LoginContext);
 
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
 		null
