@@ -12,7 +12,13 @@ function App() {
 	const [loginModalOpen, setLoginModalOpen] = React.useState<boolean>(false);
 	const [contactModalOpen, setContactModalOpen] = React.useState<boolean>(false);
 	const [isEditingContact, setIsEditingContact] = React.useState<boolean>(false);
-	const [contactToEdit, setContactToEdit] = React.useState<number>(0);
+	const [contactToEdit, setContactToEdit] = React.useState<IContact>({
+		id: 0,
+		areaCode: '00',
+		phoneNumber: '0000000000',
+		contactName: 'John Doe',
+		userId: 0,
+	});
 
 	React.useEffect(() => {
 		const token = localStorage.getItem('token');

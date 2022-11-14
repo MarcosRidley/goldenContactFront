@@ -1,4 +1,5 @@
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import { padding } from "@mui/system";
 import { useContext } from "react";
 import { LoginContext } from "../../Contexts/LoginContext";
 
@@ -15,10 +16,10 @@ const CallToLogin = () => {
   };
   return (
 		<div className="call-to-login" style={style}>
-			<h1>Log in to see your contacts</h1>
+			<Typography variant="h5" sx={{ fontWeight: "bold" }}> Log in to see your contacts</Typography>
 			<Button
 				variant={'contained'}
-        sx={{ width: '50%', alignSelf: 'center', m: 2, fontWeight: 'bold', height:'10%' }}
+        sx={{ width: '35%', maxWidth:'340px', alignSelf: 'center', m: 2, height:'10%', fontWeight:'normal', p:5 }}
 				onClick={() => setLoginModalOpen(true)}
 			>
 				Register/Login

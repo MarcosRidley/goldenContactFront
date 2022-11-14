@@ -7,6 +7,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import { Button, CircularProgress, TextField } from '@mui/material';
+import IContact from '../../interfaces/IContact';
 
 const style = {
 	position: 'absolute' as 'absolute',
@@ -18,6 +19,9 @@ const style = {
 	border: '2px solid #000',
 	boxShadow: 24,
 	p: 4,
+	maxWidth: '90%',
+	padding: '2%',
+	borderRadius: '10px',
 };
 
 interface CreateContactModalProps {
@@ -48,6 +52,16 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 		setContactModalOpen(false);
 		setIsEditingContact(false);
 	};
+
+	//this effect makes so that when the modal opens, the form is filled with the contact's data if the user is editing a contact
+	React.useEffect(() => {
+		if (isEditingContact) {
+			setContactName(contactToEdit.contactName);
+			setContactPhoneNumber(contactToEdit.phoneNumber);
+			setContactAreaCode(contactToEdit.areaCode);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isEditingContact]);
 
 	const handleAddContact = async (
 		contactName: string,
@@ -89,7 +103,7 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 	};
 
 	const handleEditContact = async (
-		id: number,
+		contact: IContact,
 		contactName: string,
 		areaCode: string,
 		phoneNumber: string
@@ -99,7 +113,7 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 
 		try {
 			const response = await fetch(
-				'https://goldcontactsapi.herokuapp.com/contacts/' + id,
+				'https://goldcontactsapi.herokuapp.com/contacts/' + contact.id,
 				{
 					method: 'PATCH',
 					headers: {
@@ -173,7 +187,6 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 								placeholder="John doe"
 								inputProps={{ minLength: 4, maxLength: 25 }}
 								error={
-									contactName === '' ||
 									contactName.length < 4 ||
 									contactName.length > 25
 								}
@@ -223,7 +236,6 @@ export default function CreateContactModal(props: CreateContactModalProps) {
 									sx={{ width: '45%', m: 2, p: 2 }}
 									disabled={
 										isLoading ||
-										contactName === '' ||
 										contactName.length < 4 ||
 										contactName.length > 25 ||
 										contactAreaCode.length !== 2 ||

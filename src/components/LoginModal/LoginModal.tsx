@@ -18,6 +18,9 @@ const style = {
 	border: '2px solid #000',
 	boxShadow: 24,
 	p: 4,
+	maxWidth: '90%',
+	padding: '2%',
+	borderRadius: '10px',
 };
 
 export default function LoginModal() {
@@ -112,7 +115,7 @@ export default function LoginModal() {
 							<Box textAlign="center" sx={{ width: '100%' }}>
 								<Button
 									variant={!isLogin ? 'contained' : 'outlined'}
-									sx={{ width: '45%', mx: 0.5 }}
+									sx={{ width: '45%', mx: 0.5, my: 2 }}
 									disabled={isLoading}
 									onClick={() => {
 										//userName and password clear upon switching between login and register, this behavior can be changed if needed
@@ -125,7 +128,7 @@ export default function LoginModal() {
 								</Button>
 								<Button
 									variant={isLogin ? 'contained' : 'outlined'}
-									sx={{ width: '45%', mx: 0.5 }}
+									sx={{ width: '45%', mx: 0.5, my: 2 }}
 									disabled={isLoading}
 									onClick={() => {
 										//userName and password clear upon switching between login and register, this behavior can be changed if needed
@@ -152,6 +155,9 @@ export default function LoginModal() {
 								label="Username"
 								disabled={isLoading}
 								variant="outlined"
+								inputProps={{ minLength: 4, maxLength: 20 }}
+								error={userName.length < 4 || userName.length > 20}
+								helperText={'Username must be between 4 and 20 characters'}
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}
 								value={userName}
 								onChange={(e) => setUserName(e.target.value)}
@@ -161,6 +167,9 @@ export default function LoginModal() {
 								required
 								type="password"
 								disabled={isLoading}
+								inputProps={{ minLength: 4, maxLength: 20 }}
+								error={password.length < 4 || password.length > 20 || password.includes(' ') }
+								helperText={'Password must be between 4 and 20 characters and cannot contain spaces'}
 								label="Password"
 								variant="outlined"
 								sx={{ width: '80%', alignSelf: 'center', m: 2 }}

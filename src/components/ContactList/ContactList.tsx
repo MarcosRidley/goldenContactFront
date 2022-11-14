@@ -64,14 +64,14 @@ export default function ContactList() {
 		);
 	}, [userContacts, searchTerm]);
 
-	const handleEdit = async (id: number) => {
+	const handleEdit = async (contact: IContact) => {
 		setIsEditingContact(true);
-		setContactToEdit(id);
+		setContactToEdit(contact);
 		setContactModalOpen(true);
 	};
 
-	const handleDelete = async (id: number) => {
-		await fetch(`https://goldcontactsapi.herokuapp.com/contacts/${id}`, {
+	const handleDelete = async (contact: IContact) => {
+		await fetch(`https://goldcontactsapi.herokuapp.com/contacts/${contact.id}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -218,13 +218,13 @@ export default function ContactList() {
 												</Button>
 												<Button
 													sx={{ fontWeight: 'bold' }}
-													onClick={() => handleEdit(contact.id)}
+													onClick={() => handleEdit(contact)}
 												>
 													<EditIcon color="action" fontSize="large"></EditIcon>
 												</Button>
 												<Button
 													sx={{ fontWeight: 'bold' }}
-													onClick={() => handleDelete(contact.id)}
+													onClick={() => handleDelete(contact)}
 												>
 													<DeleteIcon color="error" fontSize="large" />
 												</Button>
