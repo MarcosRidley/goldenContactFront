@@ -15,18 +15,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ContactList() {
-	const { setContactModalOpen, setIsEditingContact, setContactToEdit } =
+	const { setContactModalOpen, setIsEditingContact, setContactToEdit, setRequestInProgress } =
 		React.useContext(LoginContext);
 	const [userContacts, setUserContacts] = React.useState<IContact[]>([]);
 	const [rerenderTrigger, setRerenderTrigger] = React.useState<number>(0);
 	const [searchTerm, setSearchTerm] = React.useState<string>('');
-	const [filteredContacts, setFilteredContacts] = React.useState<IContact[]>(
-		[]
-	);
+	const [filteredContacts, setFilteredContacts] = React.useState<IContact[]>([]);
+
 
 	React.useEffect(() => {
 		const getRequests = async () => {
 			try {
+        setRequestInProgress(true);
 				const response = await fetch(
 					'https://goldcontactsapi.herokuapp.com/contacts',
 					{
@@ -40,14 +40,17 @@ export default function ContactList() {
 				if (response.status === 200) {
 					const data = await response.json();
 					setUserContacts(data);
+          setRequestInProgress(false);
 				} else {
 					throw new Error('Failed to fetch contacts');
 				}
 			} catch (error) {
         console.log(error);
+        setRequestInProgress(false);
 			}
 		};
 		getRequests();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rerenderTrigger]);
 
 	React.useEffect(() => {
@@ -71,6 +74,9 @@ export default function ContactList() {
 	};
 
 	const handleDelete = async (contact: IContact) => {
+    const confirmation = window.confirm(`Are you sure you want to delete ${contact.contactName}?`);
+    if(!confirmation) return;
+    setRequestInProgress(true);
 		await fetch(`https://goldcontactsapi.herokuapp.com/contacts/${contact.id}`, {
 			method: 'DELETE',
 			headers: {
@@ -79,6 +85,7 @@ export default function ContactList() {
 			},
 		});
 		setRerenderTrigger((prevState) => prevState + 1);
+    setRequestInProgress(false);
 	};
 
 	const capitalizeFirstLetter = (string: string) => {
@@ -166,12 +173,16 @@ export default function ContactList() {
 									variant: 'body1',
 									fontWeight: 'bold',
 									color: '#111',
+                  // overflow: 'hidden',
 								}}
 								sx={{
 									alignItems: 'center',
 									display: 'flex',
 									justifyContent: 'space-between',
 									width: '100%',
+                  // if the contact name is too long the text will break into two lines
+                  wordBreak: 'break-all',
+                  // if truncating the contact name is preferred, comment out the line above and uncomment the overflow hidden line on primarytypographyprops 
 								}}
 								secondary={
 									<React.Fragment>

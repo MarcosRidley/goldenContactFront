@@ -1,7 +1,9 @@
+import { request } from 'http';
 import React from 'react';
 import CallToLogin from './components/CallTologin';
 import ContactList from './components/ContactList/';
 import Header from './components/Header';
+import RequestInProgress from './components/RequestInProgress';
 import { LoginContext } from './Contexts/LoginContext';
 import IContact from './interfaces/IContact';
 
@@ -12,6 +14,7 @@ function App() {
 	const [loginModalOpen, setLoginModalOpen] = React.useState<boolean>(false);
 	const [contactModalOpen, setContactModalOpen] = React.useState<boolean>(false);
 	const [isEditingContact, setIsEditingContact] = React.useState<boolean>(false);
+	const [requestInProgress, setRequestInProgress] = React.useState<boolean>(false);
 	const [contactToEdit, setContactToEdit] = React.useState<IContact>({
 		id: 0,
 		areaCode: '00',
@@ -49,9 +52,12 @@ function App() {
 					setIsEditingContact,
 					contactToEdit,
 					setContactToEdit,
+					requestInProgress,
+					setRequestInProgress,
 				}}
 			>
 				<Header />
+				{ requestInProgress && <RequestInProgress />}
 				{isLoggedIn ? <ContactList /> : <CallToLogin />}
 			</LoginContext.Provider>
 		</div>
