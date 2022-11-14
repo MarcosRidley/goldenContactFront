@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import LoginModal from '../LoginModal';
 
 function Header() {
@@ -64,7 +64,7 @@ function Header() {
 						Golden Contacts
 					</Typography>
 
-					<AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 0.5 }} />
+					<ImportContactsIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 0.8, color:'gold'}} />
 					<Typography
 						variant="h5"
 						noWrap
