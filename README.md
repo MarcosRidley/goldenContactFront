@@ -4,7 +4,7 @@ This project is a simple contacts manager. It was requested as part of the entry
 
 ## To run this project:
 
-You can view and use the project live at [https://goldencontact.vercel.app/](its deployed address.)
+You can view and use the project live at [its deployed address](https://goldencontact.vercel.app/)
 
 You can also clone this repository and run it locally with this source code:
 
@@ -18,4 +18,4 @@ Make sure you have internet access as this project uses the GoldenContactsApi to
 
 ## See more 
 
-You can see the backend code for this project at [https://github.com/MarcosRidley/goldenContact](this github repository) 
+You can see the backend code for this project at [this github repository](https://github.com/MarcosRidley/goldenContact) 
